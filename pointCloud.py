@@ -7,6 +7,7 @@ from plyfile import PlyData
 from typing import Mapping
 from dataclasses import dataclass
 
+
 @dataclass
 class PointCloudData(object):
     npPoints: np.ndarray
@@ -172,7 +173,6 @@ pointCloudData = PointCloudData.initFromFile(inputFile)
 filtered = ColorFilter.filter(pointCloudData)
 
 
-
 pcd = filtered.toPointCloud()
 labels = np.array(pcd.cluster_dbscan(eps=0.04, min_points=7))
 
@@ -188,4 +188,3 @@ clustered = pointClusters.toPointCloud()
 print(pointClusters.toCenterMap())
 
 # v.visualize([colorized.toPointCloud()])
-v.visualize([clustered])
