@@ -12,7 +12,8 @@ expectedHeight = 1.5
 expectedRadius = 1.25 / 2
 
 angleStep = 2 * math.pi / 360 / 2
-maxAngle = 2 * math.pi * 10
+# maxAngle = 2 * math.pi * 10
+maxAngle = 0
 
 z0 = expectedHeight
 
@@ -99,9 +100,12 @@ pcd.points = o3d.utility.Vector3dVector(array)
 
 print("P Len", len(points), "tL", tL)
 
+points = np.loadtxt("point_clouds/cone_test_points.csv", delimiter=",")
+
+
 pc2 = o3d.geometry.PointCloud()
 pc2.points = o3d.utility.Vector3dVector(points)
-
+# arrow = o3d.geometry.TriangleMesh.create_arrow()
 v.visualize([pc2])
 
 # np.savetxt("point_clouds/cone_test_points.csv", points, delimiter=",")
