@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import open3d as o3d
-import visualizer as v
+from visualizer import *
 
 
 a = 1 / 60
@@ -105,7 +105,15 @@ points = np.loadtxt("point_clouds/cone_test_points.csv", delimiter=",")
 
 pc2 = o3d.geometry.PointCloud()
 pc2.points = o3d.utility.Vector3dVector(points)
+pc2.paint_uniform_color([0, 0, 1])
 # arrow = o3d.geometry.TriangleMesh.create_arrow()
-v.visualize([pc2])
 
+v = visualizerOf([pc2])
+# v.show()
+
+for i in range(0, len(points)):
+    pc2.colors[i] = [i / len(points), i / len(points), 0]
+    v.updateGeometryAndRefresh([pc2])
+
+v.show()
 # np.savetxt("point_clouds/cone_test_points.csv", points, delimiter=",")

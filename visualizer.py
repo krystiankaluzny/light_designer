@@ -1,22 +1,65 @@
 import open3d as o3d
 import open3d.visualization as o3dv
 import numpy as np
-from typing import List, Tuple
+from typing import List
+
+class Visualizer(object):
+
+    def __init__(self, vis: o3dv.VisualizerWithKeyCallback):
+        self.vis = vis
+
+    def addGeometry(self, geometries: List[o3d.geometry.Geometry]):
+        for g in geometries:
+            self.vis.add_geometry(g)
+
+    def updateGeometry(self, geometries: List[o3d.geometry.Geometry]):
+        for g in geometries:
+            self.vis.update_geometry(g)
+
+    def updateGeometryAndRefresh(self, geometries: List[o3d.geometry.Geometry]):
+        for g in geometries:
+            self.vis.update_geometry(g)
+        self.vis.poll_events()
+        self.vis.update_renderer()
+
+    def __initCamera(self):
+        vc: o3dv.ViewControl = self.vis.get_view_control()
+        vc.set_front([0, -1, 0.2])
+
+    def show(self):
+        self.__initCamera()
+
+        self.vis.run()  # until user presses "q" to terminate
+        self.vis.destroy_window()
 
 
-def changeBackgroundToBlack(vis):
+def visualizerOf(geometries: List[o3d.geometry.Geometry]):
+    vis = o3dv.VisualizerWithKeyCallback()
+    vis.register_key_callback(ord("B"), __changeBackgroundToBlack)
+    vis.register_key_callback(ord("W"), __changeBackgroundToWhite)
+    vis.create_window("Test")
+
+    for axis in __createAxis():
+        vis.add_geometry(axis)
+
+    v = Visualizer(vis)
+    v.addGeometry(geometries)
+    return v
+
+
+def __changeBackgroundToBlack(vis):
     opt = vis.get_render_option()
     opt.background_color = np.asarray([0, 0, 0])
     return False
 
 
-def changeBackgroundToWhite(vis):
+def __changeBackgroundToWhite(vis):
     opt = vis.get_render_option()
     opt.background_color = np.asarray([1, 1, 1])
     return False
 
 
-def text3D(text, pos, direction=None, degree=0.0, density=10, font='/usr/share/fonts/truetype/freefont/FreeMono.ttf', font_size=12) -> o3d.geometry.PointCloud():
+def __text3D(text, pos, direction=None, degree=0.0, density=10, font='/usr/share/fonts/truetype/freefont/FreeMono.ttf', font_size=12) -> o3d.geometry.PointCloud():
     """
     Generate a 3D text point cloud used for visualization.
     :param text: content of the text
@@ -57,7 +100,7 @@ def text3D(text, pos, direction=None, degree=0.0, density=10, font='/usr/share/f
     return pcd
 
 
-def createArrow(scale=(1 / 100)) -> o3d.geometry.TriangleMesh:
+def __createArrow(scale=(1 / 100)) -> o3d.geometry.TriangleMesh:
     return o3d.geometry.TriangleMesh.create_arrow(
         cylinder_radius=scale * 0.8,
         cone_radius=scale * 1.5,
@@ -66,69 +109,39 @@ def createArrow(scale=(1 / 100)) -> o3d.geometry.TriangleMesh:
     )
 
 
-def createXAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
+def __createXAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
     color = [1, 0, 0]
-    arrow = createArrow(scale)
+    arrow = __createArrow(scale)
     arrow.paint_uniform_color(color)
     R = o3d.geometry.get_rotation_matrix_from_xyz([0, np.pi / 2, 0])
     arrow = arrow.rotate(R, center=[0, 0, 0])
 
-    label = text3D("X", pos=[scale * 14, -scale * 2, 0.0])
+    label = __text3D("X", pos=[scale * 14, -scale * 2, 0.0])
     label.paint_uniform_color(color)
     return [arrow, label]
 
 
-def createYAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
+def __createYAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
     color = [0, 1, 0]
-    arrow = createArrow(scale)
+    arrow = __createArrow(scale)
     arrow.paint_uniform_color(color)
     R = o3d.geometry.get_rotation_matrix_from_xyz([-np.pi / 2, 0, 0])
     arrow = arrow.rotate(R, center=[0, 0, 0])
 
-    label = text3D("Y", pos=[-scale * 3, scale * 14, 0.0])
+    label = __text3D("Y", pos=[-scale * 3, scale * 14, 0.0])
     label.paint_uniform_color(color)
     return [arrow, label]
 
 
-def createZAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
+def __createZAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
     color = [0, 0, 1]
-    arrow = createArrow(scale)
+    arrow = __createArrow(scale)
     arrow.paint_uniform_color(color)
 
-    label = text3D("Z", pos=[-scale * 3, -scale * 2, scale * 15])
+    label = __text3D("Z", pos=[-scale * 3, -scale * 2, scale * 15])
     label.paint_uniform_color(color)
     return [arrow, label]
 
 
-def createAxis() -> List[o3d.geometry.Geometry]:
-    return createXAxis() + createYAxis() + createZAxis()
-
-
-def rotate_x(vis):
-    vc: o3dv.ViewControl = vis.get_view_control()
-    vc.rotate(30, 0, 0)
-    return False
-
-
-def visualize(pointClouds: List[o3d.geometry.Geometry]):
-    vis = o3dv.VisualizerWithKeyCallback()
-    vis.register_key_callback(ord("B"), changeBackgroundToBlack)
-    vis.register_key_callback(ord("W"), changeBackgroundToWhite)
-    vis.register_key_callback(ord("X"), rotate_x)
-    vis.create_window("Test")
-
-    for pcd in pointClouds:
-        vis.add_geometry(pcd)
-
-    for axis in createAxis():
-        vis.add_geometry(axis)
-
-    # vis.add_geometry(createZArrow())
-    opt = vis.get_render_option()
-    # opt.show_coordinate_frame = True
-    # vc: o3dv.ViewControl = vis.get_view_control()
-    # vc.rotate(90, 0, 90)
-
-    vis.run()  # until user presses "q" to terminate
-    vis.destroy_window()
-    # o3d.visualization.draw_geometries_with_key_callbacks(pointClouds, key_to_callback)
+def __createAxis() -> List[o3d.geometry.Geometry]:
+    return __createXAxis() + __createYAxis() + __createZAxis()
