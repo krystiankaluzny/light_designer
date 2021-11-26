@@ -2,7 +2,7 @@ import numpy as np
 import open3d as o3d
 import colorsys
 import matplotlib.pyplot as plt
-import visualizer as v
+from renderer.visualizer import visualizerOf
 from plyfile import PlyData
 from typing import Mapping
 from dataclasses import dataclass
@@ -89,11 +89,11 @@ class Colorizer(object):
         return PointCloudData(npPoints, npColors)
 
     @staticmethod
-    def colorizeByNum(pcd: PointCloudData, labels: np.ndarray):
+    def colorizeFirstLabels(pcd: PointCloudData, labels: np.ndarray, numOfLabelsToColorize=10):
         maxLabel = labels.max()
         print(maxLabel)
         colors = plt.get_cmap("tab20")(labels / (maxLabel if maxLabel > 0 else 1))
-        colors[labels > 10] = 0
+        colors[labels > numOfLabelsToColorize] = 0
 
         npPoints = pcd.npPoints
         npColors = colors[:, :3]
@@ -178,13 +178,19 @@ labels = np.array(pcd.cluster_dbscan(eps=0.04, min_points=7))
 
 filtered, labels = NoiseFilter.filter(filtered, labels)
 colorized = Colorizer.colorize(filtered, labels)
-colorized = Colorizer.colorizeByNum(colorized, labels)
+# colorized = Colorizer.colorizeFirstLabels(colorized, labels, 20)
 
-print(len(filtered.npPoints))
-print(len(filtered.npColors))
+# print(len(filtered.npPoints))
+# print(len(filtered.npColors))
 pointClusters = PointClusters.create(colorized, labels)
 pointClusters.calculate()
 clustered = pointClusters.toPointCloud()
-print(pointClusters.toCenterMap())
+# print(pointClusters.toCenterMap())
 
-# v.visualize([colorized.toPointCloud()])
+
+# show all points
+# v = visualizerOf([colorized.toPointCloud()], axis=False)
+
+# show cluster centers
+v = visualizerOf([pointClusters.toPointCloud()], axis=False)
+v.show()

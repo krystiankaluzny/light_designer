@@ -33,14 +33,15 @@ class Visualizer(object):
         self.vis.destroy_window()
 
 
-def visualizerOf(geometries: List[o3d.geometry.Geometry]):
+def visualizerOf(geometries: List[o3d.geometry.Geometry], axis=True):
     vis = o3dv.VisualizerWithKeyCallback()
     vis.register_key_callback(ord("B"), __changeBackgroundToBlack)
     vis.register_key_callback(ord("W"), __changeBackgroundToWhite)
     vis.create_window("Test")
 
-    for axis in __createAxis():
-        vis.add_geometry(axis)
+    if axis:
+        for axis in __createAxis():
+            vis.add_geometry(axis)
 
     v = Visualizer(vis)
     v.addGeometry(geometries)
