@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import open3d as o3d
+import random
 from painter import Painter
 from renderer.o3dRenderer import O3dRenderer
 from renderer.visualizer import visualizerOf
@@ -129,8 +130,26 @@ def findAndDrow():
     v.show()
 
 
+def rand():
+    return random.uniform(-expectedRadius / 10, +expectedRadius / 10)
+
+
+def addPositionNoise():
+    points = np.loadtxt("point_clouds/cone_test_points_2.csv", delimiter=",")
+    for i, p in enumerate(points):
+        points[i] = [p[0] + rand(), p[1] + rand(), p[2] + rand()]
+
+    np.savetxt("point_clouds/cone_test_points_rand_10.csv", points, delimiter=",")
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(points)
+    pcd.paint_uniform_color([0, 0, 1])
+    v = visualizerOf([pcd], axis=False)
+    v.show()
+
+
 # testAndDrow()
-findAndDrow()
+# findAndDrow()
+# addPositionNoise()
 
 # points = np.flip(points, axis=0)
 

@@ -37,6 +37,7 @@ def visualizerOf(geometries: List[o3d.geometry.Geometry], axis=True):
     vis = o3dv.VisualizerWithKeyCallback()
     vis.register_key_callback(ord("B"), __changeBackgroundToBlack)
     vis.register_key_callback(ord("W"), __changeBackgroundToWhite)
+    vis.register_key_callback(ord("Q"), __quit)
     vis.create_window("Test")
 
     if axis:
@@ -57,6 +58,11 @@ def __changeBackgroundToBlack(vis):
 def __changeBackgroundToWhite(vis):
     opt = vis.get_render_option()
     opt.background_color = np.asarray([1, 1, 1])
+    return False
+
+
+def __quit(vis):
+    vis.destroy_window()
     return False
 
 

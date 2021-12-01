@@ -56,12 +56,13 @@ class ColorFilter(object):
     @staticmethod
     def isLighted(hlsColor):
         return hlsColor[1] > 0.70
+        return True
 
     @staticmethod
     def isLightBlue(hlsColor):
         h = hlsColor[0] * 360
         # return True
-        return h > 180 and h < 200
+        return h > 160 and h < 190
 
 
 class NoiseFilter(object):
@@ -168,16 +169,19 @@ class PointClusters(object):
         return centers
 
 
-inputFile = "point_clouds/test9.1.ply"
+# inputFile = "point_clouds/test9.1.ply"
+inputFile = "point_clouds/decerto_choinka_2.ply"
 pointCloudData = PointCloudData.initFromFile(inputFile)
-filtered = ColorFilter.filter(pointCloudData)
+colorFiltered = ColorFilter.filter(pointCloudData)
 
 
-pcd = filtered.toPointCloud()
+pcd = colorFiltered.toPointCloud()
 labels = np.array(pcd.cluster_dbscan(eps=0.04, min_points=7))
 
-filtered, labels = NoiseFilter.filter(filtered, labels)
-colorized = Colorizer.colorize(filtered, labels)
+filtered, labels = NoiseFilter.filter(colorFiltered, labels)
+colorized = colorFiltered
+# colorized = filtered
+# colorized = Colorizer.colorize(filtered, labels)
 # colorized = Colorizer.colorizeFirstLabels(colorized, labels, 20)
 
 # print(len(filtered.npPoints))
@@ -189,8 +193,8 @@ clustered = pointClusters.toPointCloud()
 
 
 # show all points
-# v = visualizerOf([colorized.toPointCloud()], axis=False)
+v = visualizerOf([colorized.toPointCloud()], axis=False)
 
 # show cluster centers
-v = visualizerOf([pointClusters.toPointCloud()], axis=False)
+# v = visualizerOf([pointClusters.toPointCloud()], axis=False)
 v.show()
