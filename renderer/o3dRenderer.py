@@ -3,6 +3,7 @@ import open3d as o3d
 from renderer.renderer import Renderer
 from renderer.visualizer import visualizerOf
 
+
 class O3dRenderer(Renderer):
 
     def __init__(self, visualizer):
