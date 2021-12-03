@@ -215,5 +215,3 @@ np.savetxt("../data/lights/lights_1.csv", pointClusters.toCenters(), delimiter="
 # show cluster centers
 # v = visualizerOf([pointClusters.toPointCloud()], axis=False)
 # v.show()
-
-

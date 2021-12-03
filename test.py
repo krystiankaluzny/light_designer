@@ -15,13 +15,13 @@ def moveXBy(points, xDiff):
         points[i] = [p[0] + xDiff, p[1], p[2]]
 
 
-points_10 = np.loadtxt("point_clouds/cone_test_points_rand_10.csv", delimiter=",")
-points_15 = np.loadtxt("point_clouds/cone_test_points_rand_15.csv", delimiter=",")
-points_20 = np.loadtxt("point_clouds/cone_test_points_rand_20.csv", delimiter=",")
-points_30 = np.loadtxt("point_clouds/cone_test_points_rand_30.csv", delimiter=",")
-points_40 = np.loadtxt("point_clouds/cone_test_points_rand_40.csv", delimiter=",")
-points_50 = np.loadtxt("point_clouds/cone_test_points_rand_40.csv", delimiter=",")
-points_no = np.loadtxt("point_clouds/cone_test_points_2.csv", delimiter=",")
+points_10 = np.loadtxt("data/cone_test/cone_test_points_rand_10.csv", delimiter=",")
+points_15 = np.loadtxt("data/cone_test/cone_test_points_rand_15.csv", delimiter=",")
+points_20 = np.loadtxt("data/cone_test/cone_test_points_rand_20.csv", delimiter=",")
+points_30 = np.loadtxt("data/cone_test/cone_test_points_rand_30.csv", delimiter=",")
+points_40 = np.loadtxt("data/cone_test/cone_test_points_rand_40.csv", delimiter=",")
+points_50 = np.loadtxt("data/cone_test/cone_test_points_rand_50.csv", delimiter=",")
+points_no = np.loadtxt("data/cone_test/cone_test_points_2.csv", delimiter=",")
 
 moveXBy(points_10, 0)
 moveXBy(points_15, 1.5)
