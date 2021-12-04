@@ -113,3 +113,14 @@ while True:
         stop = 0
 
     time.sleep(0.05)
+
+
+while True:
+    colors = ColorBuilder(npPoints).inIndexRange(color, start, stop).build()
+    renderer.render(npPoints, colors)
+
+    stop += step
+    if stop >= len(npPoints):
+        stop = 0
+
+    time.sleep(0.05)
