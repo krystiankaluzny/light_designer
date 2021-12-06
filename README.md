@@ -1,4 +1,13 @@
+# Jak zacząć
+
+Wystarczy że skopiujesz `template.py`, nadasz swojemu skryptowi unikalną nazwę i możesz kodzić.
+Najlepiej żeby Twój skrypt był w głównym katalogu projektu (obok template.py), dzięki czemu ściezki będą takie same jak na raspberry.
+Stworzone API zakłada użycie biblioteki numpy, a kolory powinny być w zakresie [0, 1]
+
 # Struktura projektu
+
+ - raw.txt - plik z pozycjami światełek
+ - template.py - przykładowa animacja
 
  - **data** - katalog z różnymi danymi wejściowymi; csv, ply, jpg
     - **cone_test** - pliki csv z wgenerowanymi punktami do symulacji światełek choinkowych
@@ -16,5 +25,9 @@
     - neoPixelRenderer.py - implementacja renderera dla choinki. Metoda `render` uwzględnia tylko tablicę kolorów, która musi być posortowana i odpowiadać kolejnym lampkom
     - o3dRenderer.py - implementacja renderera dla open3d. Renderer do symulacji
     - visualizer.py - dodatkowa abstrakcja dla open3d
+      Skróty klawiszowe:
+       - Q - wyjście
+       - B - ustaw czarne tło
+       - W - ustaw białe tło
+    - rendererFactory.py - konfiguracja renderera, aby skrypty z animacjami były przenaszalne 1 do 1 z symulatora do raspberry
 
- - rendererFactory.py - konfiguracja renderera, aby skrypty z animacjami były przenaszalne 1 do 1 z symulatora do raspberry

@@ -10,7 +10,7 @@ class NeoPixelRenderer(Renderer):
         self.__pixelPin = board.D21
         self.__pixelCount = 500
         self.__pixelOrder = neopixel.GRB
-        self.__pixels = neopixel.NeoPixel(self.__pixelPin, self.__pixelCount, brightness=0.2, auto_write=False, pixel_order=self.__pixelOrder)
+        self.__pixels = neopixel.NeoPixel(self.__pixelPin, self.__pixelCount, brightness=0.9, auto_write=False, pixel_order=self.__pixelOrder)
 
     def __round(self, a):
         x = max(0.0, min(1.0, a))

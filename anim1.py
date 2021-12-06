@@ -1,12 +1,9 @@
 import numpy as np
-import time
 import math
-from rendererFactory import createRenderer
-from lights import Lights
-
-points = np.loadtxt("data/cone_test/cone_test_points_rand_15.csv", delimiter=",")
+from renderer.rendererFactory import createRenderer
 
 
+points = np.loadtxt("raw.txt", delimiter=",")
 renderer = createRenderer()
 
 
@@ -22,11 +19,15 @@ def colorInRange(points, color, start, stop):
     return colors
 
 
-step = 0.03
-bandWith = 0.2
-start = -bandWith
-stop = 0
+zMin = points.min(axis=0)[2]
+zMax = points.max(axis=0)[2]
+
+step = (zMax - zMin) / 10
+bandWith = (zMax - zMin) / 5
+start = zMin - bandWith
+stop = zMin
 color = [0.8, 0.1, 0.2]
+
 
 angleStep = 10
 angleBandWith = 45
@@ -36,56 +37,45 @@ angleColor = [0.1, 0.8, 0.2]
 
 class ColorBuilder(object):
 
-    def __init__(self, lights):
-        self.lights = lights
-
-    def all(self, color):
-        for i in range(0, len(self.lights)):
-            bulb = self.lights[i].setColor(color)
-
-        return self
+    def __init__(self, points):
+        self.colors = np.zeros((len(points), 3))
+        self.points = points
 
     def inZRange(self, color, start, stop):
-        for i in range(0, len(self.lights)):
-            bulb = self.lights[i]
-            z = self.lights[i].center[2]
+        for i in range(0, len(self.points)):
+            z = self.points[i][2]
             if z >= start and z <= stop:
-                bulb.setColor(color)
-
+                self.colors[i] = color
         return self
 
-    def inAngleRange(self, color, start, stop):
-        for i in range(0, len(self.lights)):
-            bulb = self.lights[i]
-            x = bulb.center[0]
-            y = bulb.center[1]
-            angle = math.degrees(math.atan2(y, x))
+    def inAngleRange(self, color, diff, start, stop):
+        for i in range(0, len(self.points)):
+            angle = math.degrees(math.atan2(self.points[i][1], self.points[i][0] - diff))
             if angle < 0:
                 angle += 360
             # if angle < 30 and angle > 0:
             # self.colors[i] = [self.colors[i][0] + color[0], self.colors[i][1] + color[1], self.colors[i][2] + color[2]]
             if angle >= start and angle <= stop:
-                c = bulb.color
-                bulb.setColor([color[0], color[1], color[2]])
-
+                self.colors[i] = [self.colors[i][0] + color[0], self.colors[i][1] + color[1], self.colors[i][2] + color[2]]
         return self
 
+    def build(self):
+        return self.colors
 
-lights = Lights.createLights(0.01, points)
 
 while True:
-    b = ColorBuilder(lights)
-    b.all([0, 0, 0])
-    b.inZRange(color, start, stop)
-    b.inAngleRange(angleColor, angleStart, angleStop)
 
-    renderer.render(lights.getPoints(), lights.getColors())
+    b = ColorBuilder(points)
+    b.inZRange(color, start, stop)
+    b.inAngleRange(angleColor, 0, angleStart, angleStop)
+
+    renderer.render(points, b.build())
     start += step
     stop += step
 
-    if start > 1.5:
-        start = -bandWith
-        stop = 0
+    if start > zMax:
+        start = zMin - bandWith
+        stop = zMin
 
     angleStart += angleStep
     angleStop += angleStep
@@ -94,7 +84,7 @@ while True:
         angleStart = 0
         angleStop = angleBandWith
 
-    time.sleep(0.05)
+    # time.sleep(0.05)
 
 
 # v.show()

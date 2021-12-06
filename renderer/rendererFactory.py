@@ -1,8 +1,7 @@
-
 def createRenderer():
-    # return __createO3dRenderer() # używać do symulacji
-    return __createO3dRendererNoAxis()  # używać do symulacji
-    # return __createNepPixelRenderer() # używać na raspberry
+    return __createO3dRenderer()  # używać do symulacji
+    # return __createO3dRendererNoAxis()  # używać do symulacji
+    # return __createNepPixelRenderer()  # używać na raspberry
 
 
 def __createO3dRenderer():
