@@ -4,6 +4,7 @@ import math
 import sys
 import random
 import matplotlib.pyplot as plt
+import open3d as o3d
 from dataclasses import dataclass
 
 
@@ -73,7 +74,7 @@ class LighBulb(object):
         return npPoints
 
     def randPoint(self, center):
-        r = 0.1
+        r = 0.15
         dx = random.uniform(-r, +r)
         dy = random.uniform(-r, +r)
         dz = random.uniform(-r, +r)
@@ -104,7 +105,7 @@ class Lights(object):
 
         return npPoints
 
-    def getPoints(self, count):
+    def getPointsCount(self, count):
         npPoints = np.zeros((0, 3))
         for i in range(min(len(self.bulbs), count)):
             bulb = self.bulbs[i]
@@ -119,7 +120,7 @@ class Lights(object):
 
         return npColors
 
-    def getColors(self, count):
+    def getColorsCount(self, count):
         npColors = np.zeros((0, 3))
         for i in range(min(len(self.bulbs), count)):
             bulb = self.bulbs[i]
@@ -127,47 +128,15 @@ class Lights(object):
 
         return npColors
 
+    def toPointCloud(self):
+        pc = o3d.geometry.PointCloud()
+        pc.points = o3d.utility.Vector3dVector(self.getPoints())
+        pc.colors = o3d.utility.Vector3dVector(self.getColors())
+        return pc
+
 
 points = np.loadtxt("../data/lights/lights_4_upright_manual_selected.csv", delimiter=",")
 
-
-zMin = points.min(axis=0)[2]
-zMax = points.max(axis=0)[2]
-
-sliceCount = 20
-sliceWith = zMax / sliceCount
-print(sliceWith)
-
-pointSlices = dict()
-
-for i in range(0, len(points)):
-    p = points[i]
-    z = p[2]
-    sliceId = int(z / sliceWith)
-    # print(z, sliceId)
-    if sliceId in pointSlices:
-        pointSlice = pointSlices[sliceId]
-    else:
-        pointSlice = PointSlice(sliceId, [])
-        pointSlices[sliceId] = pointSlice
-
-    pointSlice.add(p)
-
-print(zMin, zMax)
-print(len(pointSlices))
-
-
-npPoints = np.zeros((0, 3))
-npColors = np.zeros((0, 3))
-
-
-for sliceId in range(0, sliceCount + 1):
-    if sliceId in pointSlices:
-        pointSlice = pointSlices[sliceId]
-        pointSlice.sort()
-        for i in range(0, len(pointSlice.points)):
-            npPoints = np.append(npPoints, [pointSlice.points[i]], axis=0)
-            npColors = np.append(npColors, [pointSlice.getColor()], axis=0)
 
 lights = Lights()
 for i in range(0, len(points)):
@@ -180,12 +149,14 @@ inputFile = "../data/point_clouds/decerto_choinka_4_upright.ply"
 pointCloudData = PointCloudData.initFromFile(inputFile)
 colorFiltered = NotBrownColorFilter().filter(pointCloudData)
 
+print(lights.toPointCloud().points)
 # v = visualizerOf([], axis=True)
 v = visualizerWithEditingOf([], axis=False)
 renderer = O3dRenderer(v)
-v.addGeometry([colorFiltered.toPointCloud()])
-
-count = 1
+pcd = o3d.geometry.PointCloud()
+pcd.points = o3d.utility.Vector3dVector(np.append(colorFiltered.npPoints, lights.getPoints(), axis=0))
+pcd.colors = o3d.utility.Vector3dVector(np.append(colorFiltered.npColors, lights.getColors(), axis=0))
+v.addGeometry([pcd])
 v.show()
 
 p = v.vis.get_picked_points()
@@ -196,6 +167,8 @@ for index in p:
     y = colorFiltered.npPoints[index][1]
     z = colorFiltered.npPoints[index][2]
     print(f"{x},{y},{z}")
+
+count = 1
 
 
 def incrementCount(vis):
@@ -216,8 +189,8 @@ def decrementCount(vis):
 # v.vis.register_key_callback(ord("O"), decrementCount)
 
 
-while True:
-    # count = int(input("Liczba lampek do zapalenia: "))
-    renderer.render(lights.getPoints(count), lights.getColors(count))
+# while True:
+#     # count = int(input("Liczba lampek do zapalenia: "))
+#     renderer.render(lights.getPointsCount(count), lights.getColorsCount(count))
 
-    time.sleep(0.05)
+#     time.sleep(0.05)
