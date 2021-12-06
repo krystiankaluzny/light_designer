@@ -128,7 +128,7 @@ class Lights(object):
         return npColors
 
 
-points = np.loadtxt("../data/lights/lights_4_upright_presorted.csv", delimiter=",")
+points = np.loadtxt("../data/lights/lights_4_upright_manual_selected.csv", delimiter=",")
 
 
 zMin = points.min(axis=0)[2]
@@ -188,6 +188,15 @@ v.addGeometry([colorFiltered.toPointCloud()])
 count = 1
 v.show()
 
+p = v.vis.get_picked_points()
+print(p)
+
+for index in p:
+    x = colorFiltered.npPoints[index][0]
+    y = colorFiltered.npPoints[index][1]
+    z = colorFiltered.npPoints[index][2]
+    print(f"{x},{y},{z}")
+
 
 def incrementCount(vis):
     global count
@@ -207,8 +216,8 @@ def decrementCount(vis):
 # v.vis.register_key_callback(ord("O"), decrementCount)
 
 
-# while True:
+while True:
     # count = int(input("Liczba lampek do zapalenia: "))
-    # renderer.render(lights.getPoints(count), lights.getColors(count))
+    renderer.render(lights.getPoints(count), lights.getColors(count))
 
-    # time.sleep(0.05)
+    time.sleep(0.05)
