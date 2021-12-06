@@ -53,10 +53,11 @@ class PointSlice(object):
 
 class LighBulb(object):
 
-    def __init__(self, index, center, color):
+    def __init__(self, index, radius, center, color):
         self.index = index
         self.center = center
         self.color = color
+        self.radius = radius
         self.bulbPoints = self.generateBulb(center)
         self.bulbColors = np.zeros((len(self.bulbPoints), 3))
         self.setColor(color)
@@ -74,7 +75,7 @@ class LighBulb(object):
         return npPoints
 
     def randPoint(self, center):
-        r = 0.15
+        r = self.radius
         dx = random.uniform(-r, +r)
         dy = random.uniform(-r, +r)
         dz = random.uniform(-r, +r)
@@ -90,8 +91,9 @@ class LighBulb(object):
 
 class Lights(object):
 
-    def __init__(self):
+    def __init__(self, radius):
         self.lastIndex = -1
+        self.radius = radius
         self.bulbs = list()
 
     def add(self, center, color):
