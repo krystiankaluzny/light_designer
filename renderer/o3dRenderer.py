@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import open3d as o3d
 from renderer.renderer import Renderer
@@ -14,6 +15,7 @@ class O3dRenderer(Renderer):
         self.__init = False
 
     def render(self, points: np.ndarray, colors: np.ndarray):
+        time.sleep(0.080) # symulacja dodatkowego opóźnienia na transmisję danych do diod
         if not self.__init:
             self.__pc = o3d.geometry.PointCloud()
             self.__pc.points = o3d.utility.Vector3dVector(points)

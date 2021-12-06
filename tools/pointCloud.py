@@ -1,71 +1,13 @@
 import numpy as np
 import open3d as o3d
-import colorsys
 import sys
 import matplotlib.pyplot as plt
-from plyfile import PlyData
 from typing import Mapping
 from dataclasses import dataclass
 
 sys.path.append('../')
 from renderer.visualizer import visualizerOf
-
-
-@dataclass
-class PointCloudData(object):
-    npPoints: np.ndarray
-    npColors: np.ndarray
-
-    @staticmethod
-    def initFromFile(plyFile):
-        plyData = PlyData.read(inputFile)
-        elements = plyData.elements[0]
-        elementSize = len(elements)
-        npPoints = np.zeros((elementSize, 3))
-        npColors = np.zeros((elementSize, 3))
-
-        for i, e in enumerate(elements):
-            npPoints[i] = [e[0], e[1], e[2]]
-            npColors[i] = [e[6] / 256, e[7] / 256, e[8] / 256]
-
-        return PointCloudData(npPoints, npColors)
-
-    def toPointCloud(self):
-        pcd = o3d.geometry.PointCloud()
-        pcd.points = o3d.utility.Vector3dVector(self.npPoints)
-        pcd.colors = o3d.utility.Vector3dVector(self.npColors)
-        return pcd
-
-
-class ColorFilter(object):
-
-    @staticmethod
-    def filter(pointCloudData: PointCloudData):
-        npPoints = np.zeros((len(pointCloudData.npPoints), 3))
-        npColors = np.zeros((len(pointCloudData.npColors), 3))
-
-        idx = 0
-        for i, c in enumerate(pointCloudData.npColors):
-            hlsColor = colorsys.rgb_to_hls(c[0], c[1], c[2])
-            if ColorFilter.isLighted(hlsColor) and ColorFilter.isLightBlue(hlsColor):
-                npPoints[idx] = pointCloudData.npPoints[i]
-                npColors[idx] = c
-                idx += 1
-
-        npPoints = npPoints[~np.all(npPoints == 0, axis=1)]
-        npColors = npColors[~np.all(npColors == 0, axis=1)]
-        return PointCloudData(npPoints, npColors)
-
-    @staticmethod
-    def isLighted(hlsColor):
-        return hlsColor[1] > 0.70
-        return True
-
-    @staticmethod
-    def isLightBlue(hlsColor):
-        h = hlsColor[0] * 360
-        # return True
-        return h > 160 and h < 200
+from tools.pointCloudData import PointCloudData, BlueColorFilter
 
 
 class NoiseFilter(object):
@@ -183,17 +125,18 @@ class PointClusters(object):
 
 
 # inputFile = "point_clouds/test9.1.ply"
-inputFile = "../data/point_clouds/decerto_choinka_4.ply"
+inputFile = "../data/point_clouds/decerto_choinka_4_upright.ply"
 pointCloudData = PointCloudData.initFromFile(inputFile)
-colorFiltered = ColorFilter.filter(pointCloudData)
+colorFiltered = BlueColorFilter().filter(pointCloudData)
+# colorFiltered = NotBrownColorFilter().filter(pointCloudData)
 
 
 pcd = colorFiltered.toPointCloud()
 labels = np.array(pcd.cluster_dbscan(eps=0.04, min_points=7))
 
 filtered, labels = NoiseFilter.filter(colorFiltered, labels)
-# colorized = colorFiltered
-colorized = filtered
+colorized = colorFiltered
+# colorized = filtered
 # colorized = Colorizer.colorize(filtered, labels)
 # colorized = Colorizer.colorizeFirstLabels(colorized, labels, 20)
 
@@ -204,13 +147,13 @@ pointClusters.calculate()
 clustered = pointClusters.toPointCloud()
 print(len(pointClusters.toCenterMap()))
 # Zapis
-np.savetxt("../data/lights/lights_4.csv", pointClusters.toCenters(), delimiter=",")
+# np.savetxt("../data/lights/lights_4_upright.csv", pointClusters.toCenters(), delimiter=",")
 
 # show oryginal points
 # v = visualizerOf([pointCloudData.toPointCloud()], axis=False)
 
 # show all points
-v = visualizerOf([colorized.toPointCloud()], axis=False)
+v = visualizerOf([colorized.toPointCloud()], axis=True)
 
 # show cluster centers
 # v = visualizerOf([pointClusters.toPointCloud()], axis=False)

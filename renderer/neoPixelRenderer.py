@@ -16,12 +16,12 @@ class NeoPixelRenderer(Renderer):
         x = max(0.0, min(1.0, a))
         return int(255 if x == 1.0 else x * 256)
 
-    def __scaleColor(self, color):
-        return [self.__round(color[0]), self.__round(color[1]), self.__round(color[2])]
+    def __convertColor(self, color):
+        return [self.__round(color[1]), self.__round(color[0]), self.__round(color[2])]
 
     def render(self, points: np.ndarray, colors: np.ndarray):
 
         for i in range(self.__pixelCount):
-            self.__pixels[i] = self.__scaleColor(colors[i])
+            self.__pixels[i] = self.__convertColor(colors[i])
 
         self.__pixels.show()
