@@ -15,7 +15,7 @@ class O3dRenderer(Renderer):
         self.__init = False
 
     def render(self, points: np.ndarray, colors: np.ndarray):
-        time.sleep(0.080) # symulacja dodatkowego opóźnienia na transmisję danych do diod
+        time.sleep(0.080)  # symulacja dodatkowego opóźnienia na transmisję danych do diod
         if not self.__init:
             self.__pc = o3d.geometry.PointCloud()
             self.__pc.points = o3d.utility.Vector3dVector(points)
@@ -26,4 +26,18 @@ class O3dRenderer(Renderer):
         else:
             self.__pc.points = o3d.utility.Vector3dVector(points)
             self.__pc.colors = o3d.utility.Vector3dVector(colors)
+            self.__v.updateGeometryAndRefresh([self.__pc])
+
+    def render256(self, points: np.ndarray, colors: np.ndarray):
+        time.sleep(0.080)  # symulacja dodatkowego opóźnienia na transmisję danych do diod
+        if not self.__init:
+            self.__pc = o3d.geometry.PointCloud()
+            self.__pc.points = o3d.utility.Vector3dVector(points)
+            self.__pc.colors = o3d.utility.Vector3dVector(colors / 255)
+            self.__v.addGeometry([self.__pc])
+            self.__v.updateGeometryAndRefresh([self.__pc])
+            self.__init = True
+        else:
+            self.__pc.points = o3d.utility.Vector3dVector(points)
+            self.__pc.colors = o3d.utility.Vector3dVector(colors / 255)
             self.__v.updateGeometryAndRefresh([self.__pc])

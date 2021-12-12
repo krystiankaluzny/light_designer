@@ -21,8 +21,8 @@ Stworzone API zakłada użycie biblioteki numpy, a kolory powinny być w zakresi
     - pointCloud.py - analizator chmury punktów z Visual SFM, po ewentualnej obróbce szumów w MeshLab
 
  - **renderer** - abstrakcja do wyświetlenia punktów i ich kolorów
-    - renderer.py - bazowy interfejs, przyjmuje tablicę punktów i odpowiadającym im kolorom w przestrzeni RGB, w skali [0, 1]
-    - neoPixelRenderer.py - implementacja renderera dla choinki. Metoda `render` uwzględnia tylko tablicę kolorów, która musi być posortowana i odpowiadać kolejnym lampkom
+    - renderer.py - bazowy interfejs, przyjmuje tablicę punktów i odpowiadającym im kolorom w przestrzeni RGB, w skali [0, 1] lub [0, 255]
+    - neoPixelRenderer.py - implementacja renderera dla choinki. Metoda `render` i `render256` uwzględnia tylko tablicę kolorów, która musi być posortowana i odpowiadać kolejnym lampkom
     - o3dRenderer.py - implementacja renderera dla open3d. Renderer do symulacji
     - visualizer.py - dodatkowa abstrakcja dla open3d
 
