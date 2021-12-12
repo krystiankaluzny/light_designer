@@ -1,12 +1,14 @@
 import open3d as o3d
 import open3d.visualization as o3dv
 import numpy as np
+import os.path
 from typing import List
 
 class Visualizer(object):
 
-    def __init__(self, vis: o3dv.Visualizer):
+    def __init__(self, vis: o3dv.Visualizer, config: dict):
         self.vis = vis
+        self.config = config
 
     def addGeometry(self, geometries: List[o3d.geometry.Geometry]):
         for g in geometries:
@@ -38,13 +40,15 @@ def visualizerOf(geometries: List[o3d.geometry.Geometry], config):
     vis.register_key_callback(ord("B"), __changeBackgroundToBlack)
     vis.register_key_callback(ord("W"), __changeBackgroundToWhite)
     vis.register_key_callback(ord("Q"), __quit)
-    vis.create_window("Test")
+    vis.create_window(config.get('windowsName', 'Test'))
 
     if config.get('axis', False):
-        for axis in __createAxis():
+        for axis in __createAxis(config):
             vis.add_geometry(axis)
 
-    v = Visualizer(vis)
+    opt = vis.get_render_option()
+    opt.point_size = config.get('pointSize', 8.0)
+    v = Visualizer(vis, config)
     v.addGeometry(geometries)
     return v
 
@@ -79,7 +83,7 @@ def __quit(vis):
     return False
 
 
-def __text3D(text, pos, direction=None, degree=0.0, density=10, font='/usr/share/fonts/truetype/freefont/FreeMono.ttf', font_size=12) -> o3d.geometry.PointCloud():
+def __text3D(text, config, pos, direction=None, degree=0.0, density=10, font_size=12) -> o3d.geometry.PointCloud():
     """
     Generate a 3D text point cloud used for visualization.
     :param text: content of the text
@@ -90,6 +94,13 @@ def __text3D(text, pos, direction=None, degree=0.0, density=10, font='/usr/share
     :param font_size: size of the font
     :return: o3d.geoemtry.PointCloud object
     """
+
+    font = config.get('axisFontLocation', '/usr/share/fonts/truetype/freefont/FreeMono.ttf')
+    if not os.path.exists(font):
+        print('Font location not exists', font)
+        return o3d.geometry.PointCloud()
+
+    font_size = config.get('axisFontSize', 12)
     if direction is None:
         direction = (0., 0., 1.)
 
@@ -120,7 +131,8 @@ def __text3D(text, pos, direction=None, degree=0.0, density=10, font='/usr/share
     return pcd
 
 
-def __createArrow(scale=(1 / 100)) -> o3d.geometry.TriangleMesh:
+def __createArrow(config) -> o3d.geometry.TriangleMesh:
+    scale = config.get('axisScale', 1 / 100)
     return o3d.geometry.TriangleMesh.create_arrow(
         cylinder_radius=scale * 0.8,
         cone_radius=scale * 1.5,
@@ -129,39 +141,51 @@ def __createArrow(scale=(1 / 100)) -> o3d.geometry.TriangleMesh:
     )
 
 
-def __createXAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
+def __createXAxis(config) -> List[o3d.geometry.Geometry]:
+    scale = config.get('axisScale', 1 / 100)
     color = [1, 0, 0]
-    arrow = __createArrow(scale)
+    arrow = __createArrow(config)
     arrow.paint_uniform_color(color)
     R = o3d.geometry.get_rotation_matrix_from_xyz([0, np.pi / 2, 0])
     arrow = arrow.rotate(R, center=[0, 0, 0])
 
-    label = __text3D("X", pos=[scale * 14, -scale * 2, 0.0])
-    label.paint_uniform_color(color)
-    return [arrow, label]
+    result = [arrow]
+    if config.get('axisLabelEnable', True):
+        label = __text3D("X", config, pos=[scale * 14, -scale * 2, 0.0])
+        label.paint_uniform_color(color)
+        result.append(label)
+    return result
 
 
-def __createYAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
+def __createYAxis(config) -> List[o3d.geometry.Geometry]:
+    scale = config.get('axisScale', 1 / 100)
     color = [0, 1, 0]
-    arrow = __createArrow(scale)
+    arrow = __createArrow(config)
     arrow.paint_uniform_color(color)
     R = o3d.geometry.get_rotation_matrix_from_xyz([-np.pi / 2, 0, 0])
     arrow = arrow.rotate(R, center=[0, 0, 0])
 
-    label = __text3D("Y", pos=[-scale * 3, scale * 14, 0.0])
-    label.paint_uniform_color(color)
-    return [arrow, label]
+    result = [arrow]
+    if config.get('axisLabelEnable', True):
+        label = __text3D("Y", config, pos=[-scale * 3, scale * 14, 0.0])
+        label.paint_uniform_color(color)
+        result.append(label)
+    return result
 
 
-def __createZAxis(scale=(1 / 100)) -> List[o3d.geometry.Geometry]:
+def __createZAxis(config) -> List[o3d.geometry.Geometry]:
+    scale = config.get('axisScale', 1 / 100)
     color = [0, 0, 1]
-    arrow = __createArrow(scale)
+    arrow = __createArrow(config)
     arrow.paint_uniform_color(color)
 
-    label = __text3D("Z", pos=[-scale * 3, -scale * 2, scale * 15])
-    label.paint_uniform_color(color)
-    return [arrow, label]
+    result = [arrow]
+    if config.get('axisLabelEnable', True):
+        label = __text3D("Z", config, pos=[-scale * 3, -scale * 2, scale * 15])
+        label.paint_uniform_color(color)
+        result.append(label)
+    return result
 
 
-def __createAxis() -> List[o3d.geometry.Geometry]:
-    return __createXAxis() + __createYAxis() + __createZAxis()
+def __createAxis(config) -> List[o3d.geometry.Geometry]:
+    return __createXAxis(config) + __createYAxis(config) + __createZAxis(config)

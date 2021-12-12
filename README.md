@@ -35,5 +35,11 @@ Stworzone API zakłada użycie biblioteki numpy, a kolory powinny być w zakresi
 
       Metoda `createRenderer()` przyjmuje słownik z parametrami do konfiguracji.
       Dostepone parametry:
+        - windowsName - nazwa okna, domyślnie "Test"
         - axis - `True/False` - pokazywanie osi x-y-z
+        - axisScale - skala strzałek osi, domyślnie 1/100
+        - axisLabelEnable - czy podpisy osi włączone, domyślnie True
+        - axisFontLocation - lokalizacja pliku z czcionką do wyświetlenia podpisu, domyślnie /usr/share/fonts/truetype/freefont/FreeMono.ttf
+        - axisFontSize - rozmiar podpisu, domyślnie 12
+        - pointSize - wielkość wyswietlanych punktów, domyślnie 8.0
 

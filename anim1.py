@@ -4,7 +4,7 @@ from renderer.rendererFactory import createRenderer
 
 
 points = np.loadtxt("raw.txt", delimiter=",")
-renderer = createRenderer()
+renderer = createRenderer({'axisLabelEnable': True, 'axisScale': 1 / 2, 'axisFontSize': 300})
 
 
 def colorInRange(points, color, start, stop):
