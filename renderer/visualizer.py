@@ -33,14 +33,14 @@ class Visualizer(object):
         self.vis.destroy_window()
 
 
-def visualizerOf(geometries: List[o3d.geometry.Geometry], axis=True):
+def visualizerOf(geometries: List[o3d.geometry.Geometry], config):
     vis = o3dv.VisualizerWithKeyCallback()
     vis.register_key_callback(ord("B"), __changeBackgroundToBlack)
     vis.register_key_callback(ord("W"), __changeBackgroundToWhite)
     vis.register_key_callback(ord("Q"), __quit)
     vis.create_window("Test")
 
-    if axis:
+    if config.get('axis', False):
         for axis in __createAxis():
             vis.add_geometry(axis)
 
@@ -49,11 +49,11 @@ def visualizerOf(geometries: List[o3d.geometry.Geometry], axis=True):
     return v
 
 
-def visualizerWithEditingOf(geometries: List[o3d.geometry.Geometry], axis=True):
+def visualizerWithEditingOf(geometries: List[o3d.geometry.Geometry], config):
     vis = o3dv.VisualizerWithEditing()
     vis.create_window("Test")
 
-    if axis:
+    if config['axis']:
         for axis in __createAxis():
             vis.add_geometry(axis)
 

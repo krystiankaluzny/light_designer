@@ -25,9 +25,15 @@ Stworzone API zakłada użycie biblioteki numpy, a kolory powinny być w zakresi
     - neoPixelRenderer.py - implementacja renderera dla choinki. Metoda `render` uwzględnia tylko tablicę kolorów, która musi być posortowana i odpowiadać kolejnym lampkom
     - o3dRenderer.py - implementacja renderera dla open3d. Renderer do symulacji
     - visualizer.py - dodatkowa abstrakcja dla open3d
-      Skróty klawiszowe:
+
+      Skróty klawiszowe w oknie symulatora:
        - Q - wyjście
        - B - ustaw czarne tło
        - W - ustaw białe tło
+
     - rendererFactory.py - konfiguracja renderera, aby skrypty z animacjami były przenaszalne 1 do 1 z symulatora do raspberry
+
+      Metoda `createRenderer()` przyjmuje słownik z parametrami do konfiguracji.
+      Dostepone parametry:
+        - axis - `True/False` - pokazywanie osi x-y-z
 

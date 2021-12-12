@@ -1,22 +1,24 @@
-def createRenderer():
-    return __createO3dRenderer()  # używać do symulacji
-    # return __createO3dRendererNoAxis()  # używać do symulacji
+def createRenderer(config={}):
+    return __createO3dRenderer(config)  # używać do symulacji
+    # return __createO3dRendererNoAxis(config)  # używać do symulacji
     # return __createNepPixelRenderer()  # używać na raspberry
 
 
-def __createO3dRenderer():
+def __createO3dRenderer(config):
     from renderer.o3dRenderer import O3dRenderer
     from renderer.visualizer import visualizerOf
 
-    v = visualizerOf([], axis=True)
+    config['axis'] = True
+    v = visualizerOf([], config)
     return O3dRenderer(v)
 
 
-def __createO3dRendererNoAxis():
+def __createO3dRendererNoAxis(config):
     from renderer.o3dRenderer import O3dRenderer
     from renderer.visualizer import visualizerOf
 
-    v = visualizerOf([], axis=False)
+    config['axis'] = False
+    v = visualizerOf([], config)
     return O3dRenderer(v)
 
 
