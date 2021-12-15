@@ -17,7 +17,7 @@ class NeoPixelRenderer(Renderer):
         return int(255 if x == 1.0 else x * 256)
 
     def __round256(self, a):
-        return max(0, min(255, a))
+        return int(max(0, min(255, a)))
 
     def __convertColor(self, color):
         return [self.__round(color[1]), self.__round(color[0]), self.__round(color[2])]
