@@ -7,7 +7,8 @@ from renderer.visualizer import visualizerOf
 
 class O3dRenderer(Renderer):
 
-    def __init__(self, visualizer):
+    def __init__(self, config, visualizer):
+        self.__config = config
         if visualizer:
             self.__v = visualizer
         else:

@@ -43,3 +43,8 @@ Stworzone API zakłada użycie biblioteki numpy, a kolory powinny być w zakresi
         - axisFontSize - rozmiar podpisu, domyślnie 12
         - pointSize - wielkość wyswietlanych punktów, domyślnie 8.0
 
+# Wymagania
+ 
+```
+pip install numpy open3d
+```

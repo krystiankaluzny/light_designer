@@ -7,18 +7,6 @@ points = np.loadtxt("raw.txt", delimiter=",")
 renderer = createRenderer({'axisLabelEnable': True, 'axisScale': 1 / 2, 'axisFontSize': 300})
 
 
-def colorInRange(points, color, start, stop):
-    colors = np.zeros((len(points), 3))
-    for i in range(0, len(points)):
-        z = points[i][2]
-        if z >= start and z <= stop:
-            colors[i] = color
-        else:
-            colors[i] = [0, 0.1, 0.5]
-
-    return colors
-
-
 zMin = points.min(axis=0)[2]
 zMax = points.max(axis=0)[2]
 

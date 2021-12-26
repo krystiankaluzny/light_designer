@@ -6,7 +6,8 @@ from renderer.renderer import Renderer
 
 class NeoPixelRenderer(Renderer):
 
-    def __init__(self):
+    def __init__(self, config):
+        self,__config = config
         self.__pixelPin = board.D21
         self.__pixelCount = 500
         self.__pixelOrder = neopixel.GRB
