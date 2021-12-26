@@ -2,3 +2,4 @@ threshold*
 **/__pycache__/
 /DepthCamera_2021-10-19-15-30-52.json
 /DepthCapture_2021-10-19-15-30-52.png
+*.sublime-workspace
