@@ -2,13 +2,19 @@ import numpy as np
 import open3d as o3d
 import sys
 import matplotlib.pyplot as plt
+import datetime
+
 from typing import Mapping
 from dataclasses import dataclass
 
 sys.path.append('../')
 from renderer.visualizer import visualizerOf
-from tools.pointCloudData import PointCloudData, BlueColorFilter
+from tools.pointCloudData import PointCloudData, PointCloudDataFilter, BlueColorFilter, NotBrownColorFilter, LightedColorFilter
 
+
+class DefaultFilter(PointCloudDataFilter):
+    def filter(self, index, x, y, z, r, g, b) -> bool:
+        return True
 
 class NoiseFilter(object):
 
@@ -125,35 +131,40 @@ class PointClusters(object):
 
 
 # inputFile = "point_clouds/test9.1.ply"
-inputFile = "../data/point_clouds/decerto_choinka_4_upright.ply"
+# inputFile = "../data/point_clouds/decerto_choinka_4_upright.ply"
+startLoading = datetime.datetime.now()
+inputFile = "/home/kkaluzny/Documents/decerto_choinka/ch_07_exported_filtered.ply"
 pointCloudData = PointCloudData.initFromFile(inputFile)
-colorFiltered = BlueColorFilter().filter(pointCloudData)
-# colorFiltered = NotBrownColorFilter().filter(pointCloudData)
+pointCloudData.filter([LightedColorFilter()])
+
+finishLoading = datetime.datetime.now()
+print('Loading duration', finishLoading - startLoading)
+colorFiltered = pointCloudData
 
 
-pcd = colorFiltered.toPointCloud()
-labels = np.array(pcd.cluster_dbscan(eps=0.04, min_points=7))
+# pcd = colorFiltered.toPointCloud()
+# labels = np.array(pcd.cluster_dbscan(eps=0.04, min_points=7))
 
-filtered, labels = NoiseFilter.filter(colorFiltered, labels)
-colorized = colorFiltered
+# filtered, labels = NoiseFilter.filter(colorFiltered, labels)
+# colorized = colorFiltered
 # colorized = filtered
 # colorized = Colorizer.colorize(filtered, labels)
 # colorized = Colorizer.colorizeFirstLabels(colorized, labels, 20)
 
 # print(len(filtered.npPoints))
 # print(len(filtered.npColors))
-pointClusters = PointClusters.create(colorized, labels)
-pointClusters.calculate()
-clustered = pointClusters.toPointCloud()
-print(len(pointClusters.toCenterMap()))
+# pointClusters = PointClusters.create(colorized, labels)
+# pointClusters.calculate()
+# clustered = pointClusters.toPointCloud()
+# print(len(pointClusters.toCenterMap()))
 # Zapis
-# np.savetxt("../data/lights/lights_4_upright.csv", pointClusters.toCenters(), delimiter=",")
+# np.savetxt("../data/lights/ch_07_exported_filtered.csv", pointClusters.toCenters(), delimiter=",")
 
 # show oryginal points
-# v = visualizerOf([pointCloudData.toPointCloud()], axis=False)
+v = visualizerOf([pointCloudData.toPointCloud()], {'axis': False, 'pointSize': 2})
 
 # show all points
-v = visualizerOf([colorized.toPointCloud()], axis=True)
+# v = visualizerOf([colorized.toPointCloud()], axis=True)
 
 # show cluster centers
 # v = visualizerOf([pointClusters.toPointCloud()], axis=False)
