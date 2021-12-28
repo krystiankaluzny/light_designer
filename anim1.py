@@ -73,9 +73,3 @@ while True:
         angleStop = angleBandWith
 
     # time.sleep(0.05)
-
-
-# v.show()
-# painter = Painter(O3dRenderer())
-# painter.show()
-# v.show()

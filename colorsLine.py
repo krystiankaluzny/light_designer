@@ -22,7 +22,6 @@ for i in range(len(npColors)):
     colorIndex = segmentNumber % len(colors)
     npColors[i] = colors[colorIndex]
 
-
 while True:
     renderer.render(points, npColors)
     time.sleep(0.05)

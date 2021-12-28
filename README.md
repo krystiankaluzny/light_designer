@@ -34,6 +34,7 @@ Stworzone API zakłada użycie biblioteki numpy, a kolory powinny być w zakresi
     - rendererFactory.py - konfiguracja renderera, aby skrypty z animacjami były przenaszalne 1 do 1 z symulatora do raspberry
 
       Metoda `createRenderer()` przyjmuje słownik z parametrami do konfiguracji.
+
       Dostepone parametry:
         - windowsName - nazwa okna, domyślnie "Test"
         - axis - `True/False` - pokazywanie osi x-y-z
