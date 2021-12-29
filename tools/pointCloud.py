@@ -130,12 +130,11 @@ class PointClusters(object):
         return npPoints
 
 
-# inputFile = "point_clouds/test9.1.ply"
-# inputFile = "../data/point_clouds/decerto_choinka_4_upright.ply"
 startLoading = datetime.datetime.now()
-inputFile = "/home/kkaluzny/Documents/decerto_choinka/ch_07_exported_filtered.ply"
+# inputFile = "point_clouds/test9.1.ply"
+inputFile = "../data/point_clouds/decerto_choinka_4_upright.ply"
 pointCloudData = PointCloudData.initFromFile(inputFile)
-pointCloudData.filter([LightedColorFilter()])
+pointCloudData.filter([NotBrownColorFilter(), LightedColorFilter()])
 
 finishLoading = datetime.datetime.now()
 print('Loading duration', finishLoading - startLoading)
